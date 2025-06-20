@@ -1,0 +1,200 @@
+{% extends "customer/layout.html" %}
+
+{% block title %}Products - Bricks Production{% endblock %}
+
+{% block content %}
+<!-- Products Header -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="mb-3">Our Products</h1>
+                <p class="lead">Discover our wide range of premium quality bricks for all your construction needs.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Products Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search products..." id="product-search">
+                    <button class="btn btn-outline-primary" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="d-flex justify-content-md-end">
+                    <select class="form-select" style="width: auto;" id="sort-products">
+                        <option value="default">Sort by: Default</option>
+                        <option value="name-asc">Name (A-Z)</option>
+                        <option value="name-desc">Name (Z-A)</option>
+                        <option value="price-asc">Price (Low to High)</option>
+                        <option value="price-desc">Price (High to Low)</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="product-container">
+            {% if products %}
+                {% for product in products %}
+                    <div class="col-md-4 mb-4 product-item fade-in">
+                        <div class="card product-card h-100">
+                            <img src="{{ url_for('static', filename='images/products/' + product.image_url) }}" class="card-img-top" alt="{{ product.name }}">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.description|truncate(100) }}</p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                                    <span class="badge bg-{{ 'success' if product.stock > 0 else 'danger' }}">
+                                        {{ 'In Stock' if product.stock > 0 else 'Out of Stock' }}
+                                    </span>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline-primary w-100">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>No products available at the moment.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</section>
+
+<!-- Product Categories -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="section-title">
+            <h2>Product Categories</h2>
+            <p class="text-muted">Explore our brick categories for different construction needs</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm fade-in">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-building fa-3x mb-4" style="color: var(--primary-color);"></i>
+                        <h4>Structural Bricks</h4>
+                        <p class="text-muted">High-strength bricks designed for load-bearing walls and structural applications.</p>
+                        <a href="#" class="btn btn-outline-primary mt-3">Explore</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm fade-in">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-palette fa-3x mb-4" style="color: var(--primary-color);"></i>
+                        <h4>Decorative Bricks</h4>
+                        <p class="text-muted">Aesthetically pleasing bricks for facades, feature walls, and decorative elements.</p>
+                        <a href="#" class="btn btn-outline-primary mt-3">Explore</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card border-0 shadow-sm fade-in">
+                    <div class="card-body text-center p-5">
+                        <i class="fas fa-fire fa-3x mb-4" style="color: var(--primary-color);"></i>
+                        <h4>Special Purpose Bricks</h4>
+                        <p class="text-muted">Specialized bricks for specific applications like fire resistance, insulation, and more.</p>
+                        <a href="#" class="btn btn-outline-primary mt-3">Explore</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-dark text-white text-center">
+    <div class="container">
+        <h2 class="mb-4" style="color: var(--secondary-color);">Need Help Choosing the Right Bricks?</h2>
+        <p class="lead mb-4">Our experts are ready to assist you in selecting the perfect bricks for your project.</p>
+        <a href="#" class="btn btn-primary btn-lg">Contact Us</a>
+    </div>
+</section>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Product search functionality
+        const searchInput = document.getElementById('product-search');
+        const productItems = document.querySelectorAll('.product-item');
+        
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            productItems.forEach(item => {
+                const productName = item.querySelector('.card-title').textContent.toLowerCase();
+                const productDesc = item.querySelector('.card-text').textContent.toLowerCase();
+                
+                if (productName.includes(searchTerm) || productDesc.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // Product sorting functionality
+        const sortSelect = document.getElementById('sort-products');
+        const productContainer = document.getElementById('product-container');
+        
+        sortSelect.addEventListener('change', function() {
+            const sortValue = this.value;
+            const products = Array.from(productItems);
+            
+            products.sort((a, b) => {
+                const nameA = a.querySelector('.card-title').textContent;
+                const nameB = b.querySelector('.card-title').textContent;
+                const priceA = parseFloat(a.querySelector('.product-price').textContent.replace('$', ''));
+                const priceB = parseFloat(b.querySelector('.product-price').textContent.replace('$', ''));
+                
+                if (sortValue === 'name-asc') {
+                    return nameA.localeCompare(nameB);
+                } else if (sortValue === 'name-desc') {
+                    return nameB.localeCompare(nameA);
+                } else if (sortValue === 'price-asc') {
+                    return priceA - priceB;
+                } else if (sortValue === 'price-desc') {
+                    return priceB - priceA;
+                }
+                
+                return 0;
+            });
+            
+            // Clear and re-append sorted products
+            products.forEach(product => {
+                productContainer.appendChild(product);
+            });
+        });
+    });
+</script>
+{% endblock %}
+{% endblock %} 

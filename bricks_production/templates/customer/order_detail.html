@@ -1,0 +1,177 @@
+{% extends "customer/layout.html" %}
+
+{% block title %}Order Details - Bricks Production{% endblock %}
+
+{% block content %}
+<!-- Order Detail Header -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="mb-3">Order Details</h1>
+                <p class="lead">Order ID: {{ order.order_id }}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Order Detail Content -->
+<section class="py-5">
+    <div class="container">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <!-- Order Status -->
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Order Information</h5>
+                        <p class="mb-1"><strong>Order Date:</strong> {{ order.order_date.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                        <p class="mb-1">
+                            <strong>Status:</strong> 
+                            <span class="badge 
+                                {% if order.status == 'Delivered' %}bg-success
+                                {% elif order.status == 'Cancelled' %}bg-danger
+                                {% elif order.status == 'Paid' %}bg-info
+                                {% else %}bg-warning{% endif %}">
+                                {{ order.status }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <a href="{{ url_for('profile') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i> Back to Orders
+                        </a>
+                    </div>
+                </div>
+                
+                <hr>
+                
+                <!-- Order Items -->
+                <h5 class="mb-3">Order Items</h5>
+                <div class="table-responsive mb-4">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-center">Price</th>
+                                <th class="text-center">Quantity</th>
+                                <th class="text-end">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set subtotal = 0 %}
+                            {% for item in items %}
+                                {% set item_total = item.price * item.quantity %}
+                                {% set subtotal = subtotal + item_total %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <img src="{{ url_for('static', filename='images/products/' + item.image_url) }}" 
+                                                 alt="{{ item.name }}" style="width: 50px; height: 50px; object-fit: cover;" class="me-3">
+                                            <span>{{ item.name }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">${{ "%.2f"|format(item.price) }}</td>
+                                    <td class="text-center">{{ item.quantity }}</td>
+                                    <td class="text-end">${{ "%.2f"|format(item_total) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                                <td class="text-end">${{ "%.2f"|format(subtotal) }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Tax (10%):</strong></td>
+                                <td class="text-end">${{ "%.2f"|format(subtotal * 0.1) }}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                <td class="text-end"><strong>${{ "%.2f"|format(subtotal * 1.1) }}</strong></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                
+                <!-- Order Timeline -->
+                <h5 class="mb-3">Order Timeline</h5>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-success rounded-pill me-2">1</span>
+                                    Order Placed
+                                </div>
+                                <small class="text-muted">{{ order.order_date.strftime('%B %d, %Y') }}</small>
+                            </li>
+                            
+                            {% if order.status != 'Pending' and order.status != 'Cancelled' %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-success rounded-pill me-2">2</span>
+                                    Payment Confirmed
+                                </div>
+                                <small class="text-muted">{{ order.order_date.strftime('%B %d, %Y') }}</small>
+                            </li>
+                            {% endif %}
+                            
+                            {% if order.status == 'Processing' or order.status == 'Shipped' or order.status == 'Delivered' %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-success rounded-pill me-2">3</span>
+                                    Processing
+                                </div>
+                                <small class="text-muted">{{ order.order_date.strftime('%B %d, %Y') }}</small>
+                            </li>
+                            {% endif %}
+                            
+                            {% if order.status == 'Shipped' or order.status == 'Delivered' %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-success rounded-pill me-2">4</span>
+                                    Shipped
+                                </div>
+                                <small class="text-muted">{{ order.order_date.strftime('%B %d, %Y') }}</small>
+                            </li>
+                            {% endif %}
+                            
+                            {% if order.status == 'Delivered' %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-success rounded-pill me-2">5</span>
+                                    Delivered
+                                </div>
+                                <small class="text-muted">{{ order.order_date.strftime('%B %d, %Y') }}</small>
+                            </li>
+                            {% endif %}
+                            
+                            {% if order.status == 'Cancelled' %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-danger rounded-pill me-2">X</span>
+                                    Cancelled
+                                </div>
+                                <small class="text-muted">{{ order.order_date.strftime('%B %d, %Y') }}</small>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Need Help -->
+                <div class="alert alert-info">
+                    <h5>Need Help?</h5>
+                    <p class="mb-0">If you have any questions about your order, please contact our customer service:</p>
+                    <p class="mb-2">
+                        <i class="fas fa-phone me-2"></i> +1 (555) 123-4567
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-envelope me-2"></i> support@bricksproduction.com
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

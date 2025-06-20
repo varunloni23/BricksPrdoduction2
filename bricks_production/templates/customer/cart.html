@@ -1,0 +1,227 @@
+{% extends "customer/layout.html" %}
+
+{% block title %}Shopping Cart - Bricks Production{% endblock %}
+
+{% block content %}
+<!-- Cart Header -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="mb-3">Shopping Cart</h1>
+                <p class="lead">Review your items and proceed to checkout</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Cart Content -->
+<section class="py-5">
+    <div class="container">
+        {% if cart_items %}
+            <div class="row">
+                <!-- Cart Items -->
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm mb-4">
+                        <div class="card-body">
+                            <h4 class="mb-4">Cart Items ({{ cart_items|length }})</h4>
+                            
+                            <div class="table-responsive">
+                                <table class="table cart-table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" width="100">Product</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col" class="text-center">Price</th>
+                                            <th scope="col" class="text-center">Quantity</th>
+                                            <th scope="col" class="text-center">Subtotal</th>
+                                            <th scope="col" class="text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in cart_items %}
+                                            <tr>
+                                                <td>
+                                                    <img src="{{ url_for('static', filename='images/products/' + item.image_url) }}" alt="{{ item.name }}" class="cart-product-img">
+                                                </td>
+                                                <td>
+                                                    <h6 class="mb-0">{{ item.name }}</h6>
+                                                </td>
+                                                <td class="text-center">${{ "%.2f"|format(item.price) }}</td>
+                                                <td class="text-center">
+                                                    <form action="{{ url_for('update_cart') }}" method="post" class="d-inline">
+                                                        <div class="input-group input-group-sm" style="width: 100px;">
+                                                            <input type="hidden" name="product_id" value="{{ item.id }}">
+                                                            <button type="button" class="btn btn-outline-secondary quantity-minus">
+                                                                <i class="fas fa-minus"></i>
+                                                            </button>
+                                                            <input type="number" name="quantity" class="form-control quantity-input text-center" value="{{ item.quantity }}" min="1" max="{{ item.stock }}">
+                                                            <button type="button" class="btn btn-outline-secondary quantity-plus">
+                                                                <i class="fas fa-plus"></i>
+                                                            </button>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary mt-2">Update</button>
+                                                    </form>
+                                                </td>
+                                                <td class="text-center">${{ "%.2f"|format(item.subtotal) }}</td>
+                                                <td class="text-center">
+                                                    <a href="{{ url_for('remove_from_cart', product_id=item.id) }}" class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{{ url_for('products') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-arrow-left me-2"></i> Continue Shopping
+                                </a>
+                                <button type="button" class="btn btn-outline-danger" onclick="clearCart()">
+                                    <i class="fas fa-trash me-2"></i> Clear Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Cart Summary -->
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm cart-summary">
+                        <div class="card-body">
+                            <h4 class="mb-4">Order Summary</h4>
+                            
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Subtotal:</span>
+                                <span>${{ "%.2f"|format(total) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Shipping:</span>
+                                <span>Free</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Tax:</span>
+                                <span>${{ "%.2f"|format(total * 0.1) }}</span>
+                            </div>
+                            
+                            <hr>
+                            
+                            <div class="d-flex justify-content-between mb-4">
+                                <strong>Total:</strong>
+                                <strong>${{ "%.2f"|format(total * 1.1) }}</strong>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('checkout') }}" class="btn btn-primary">
+                                    Proceed to Checkout <i class="fas fa-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <h6>We Accept:</h6>
+                                <div class="d-flex gap-2 mt-2">
+                                    <i class="fab fa-cc-visa fa-2x" style="color: #1A1F71;"></i>
+                                    <i class="fab fa-cc-mastercard fa-2x" style="color: #EB001B;"></i>
+                                    <i class="fab fa-cc-amex fa-2x" style="color: #2E77BC;"></i>
+                                    <i class="fab fa-cc-paypal fa-2x" style="color: #003087;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-shopping-cart fa-4x" style="color: var(--primary-color);"></i>
+                </div>
+                <h3 class="mb-3">Your cart is empty</h3>
+                <p class="mb-4">Looks like you haven't added any products to your cart yet.</p>
+                <a href="{{ url_for('products') }}" class="btn btn-primary">
+                    <i class="fas fa-shopping-bag me-2"></i> Browse Products
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- You May Also Like -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="section-title">
+            <h2>You May Also Like</h2>
+            <p class="text-muted">Check out these popular products</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="{{ url_for('static', filename='images/products/red_brick.jpg') }}" class="card-img-top" alt="Red Bricks">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Red Clay Bricks</h5>
+                        <p class="card-text">High-quality red clay bricks perfect for exterior walls and facades.</p>
+                        <span class="product-price">$0.75</span>
+                        <div class="mt-auto">
+                            <a href="#" class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="{{ url_for('static', filename='images/products/concrete_block.jpg') }}" class="card-img-top" alt="Concrete Blocks">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Concrete Blocks</h5>
+                        <p class="card-text">Durable concrete blocks ideal for foundations and structural walls.</p>
+                        <span class="product-price">$1.20</span>
+                        <div class="mt-auto">
+                            <a href="#" class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="{{ url_for('static', filename='images/products/facing_brick.jpg') }}" class="card-img-top" alt="Facing Bricks">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Facing Bricks</h5>
+                        <p class="card-text">Premium facing bricks with a smooth finish for decorative purposes.</p>
+                        <span class="product-price">$1.50</span>
+                        <div class="mt-auto">
+                            <a href="#" class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="{{ url_for('static', filename='images/products/engineering_brick.jpg') }}" class="card-img-top" alt="Engineering Bricks">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Engineering Bricks</h5>
+                        <p class="card-text">High-density engineering bricks with excellent load-bearing capacity.</p>
+                        <span class="product-price">$1.35</span>
+                        <div class="mt-auto">
+                            <a href="#" class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% block extra_js %}
+<script>
+    function clearCart() {
+        if (confirm('Are you sure you want to clear your cart?')) {
+            window.location.href = '/clear-cart';
+        }
+    }
+</script>
+{% endblock %}
+{% endblock %} 

@@ -1,0 +1,105 @@
+{% extends "customer/layout.html" %}
+
+{% block title %}Order Confirmation - Bricks Production{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card border-0 shadow-sm p-4 p-md-5">
+                    <div class="text-center mb-4">
+                        <div class="mb-4">
+                            <i class="fas fa-check-circle fa-5x" style="color: var(--success-color);"></i>
+                        </div>
+                        <h1 class="mb-3">Thank You for Your Order!</h1>
+                        <p class="lead mb-0">Your order has been placed successfully.</p>
+                        <p class="mb-4">Order ID: <strong>{{ order.order_id }}</strong></p>
+                        
+                        <div class="alert {% if order.status == 'Paid' %}alert-success{% else %}alert-info{% endif %} mb-4">
+                            {% if order.status == 'Paid' %}
+                                <p class="mb-0">Your payment has been processed successfully.</p>
+                            {% else %}
+                                <p class="mb-0">You have selected Cash on Delivery. Please have the payment ready when your order arrives.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4 class="mb-3">Order Details</h4>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th class="text-center">Price</th>
+                                        <th class="text-center">Quantity</th>
+                                        <th class="text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in items %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <img src="{{ url_for('static', filename='images/products/' + item.image_url) }}" 
+                                                     alt="{{ item.name }}" style="width: 50px; height: 50px; object-fit: cover;" class="me-3">
+                                                <span>{{ item.name }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-center">${{ "%.2f"|format(item.price) }}</td>
+                                        <td class="text-center">{{ item.quantity }}</td>
+                                        <td class="text-end">${{ "%.2f"|format(item.price * item.quantity) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                                        <td class="text-end">${{ "%.2f"|format(total) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Tax (10%):</strong></td>
+                                        <td class="text-end">${{ "%.2f"|format(total * 0.1) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                        <td class="text-end"><strong>${{ "%.2f"|format(total * 1.1) }}</strong></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h4 class="mb-3">Order Status</h4>
+                        <div class="alert alert-info">
+                            <p class="mb-0">
+                                <strong>Status:</strong> {{ order.status }}
+                                <br>
+                                <strong>Order Date:</strong> {{ order.order_date.strftime('%B %d, %Y at %I:%M %p') }}
+                            </p>
+                        </div>
+                        <p>Your order will be processed and shipped within 2-3 business days. You will receive an email notification when your order ships.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <a href="{{ url_for('profile') }}" class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-user me-2"></i> View All Orders
+                                </a>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <a href="{{ url_for('products') }}" class="btn btn-primary w-100">
+                                    <i class="fas fa-shopping-bag me-2"></i> Continue Shopping
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

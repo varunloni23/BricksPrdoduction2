@@ -1,0 +1,322 @@
+{% extends "customer/layout.html" %}
+
+{% block title %}{{ product.name }} - Bricks Production{% endblock %}
+
+{% block content %}
+<!-- Product Detail Section -->
+<section class="product-detail">
+    <div class="container">
+        <div class="row">
+            <!-- Product Image -->
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="product-image-container">
+                    <img src="{{ url_for('static', filename='images/products/' + product.image_url) }}" alt="{{ product.name }}" class="product-image product-main-image">
+                    
+                    <!-- Product thumbnails (for future implementation) -->
+                    <div class="product-thumbnails mt-3 d-none">
+                        <div class="row">
+                            <div class="col-3">
+                                <img src="{{ url_for('static', filename='images/products/' + product.image_url) }}" class="img-thumbnail product-thumbnail active" data-src="{{ url_for('static', filename='images/products/' + product.image_url) }}" alt="Thumbnail 1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="col-lg-6">
+                <div class="product-info">
+                    <h2>{{ product.name }}</h2>
+                    <span class="price">${{ "%.2f"|format(product.price) }}</span>
+                    
+                    <div class="mb-4">
+                        <span class="badge bg-{{ 'success' if product.stock > 0 else 'danger' }} me-2">
+                            {{ 'In Stock' if product.stock > 0 else 'Out of Stock' }}
+                        </span>
+                        {% if product.stock > 0 %}
+                            <span class="text-muted">{{ product.stock }} units available</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="product-description mb-4">
+                        <p>{{ product.description }}</p>
+                    </div>
+                    
+                    <!-- Add to Cart Form -->
+                    <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post">
+                        <div class="d-flex align-items-center mb-4">
+                            <label for="quantity" class="me-3">Quantity:</label>
+                            <div class="input-group" style="width: 150px;">
+                                <button type="button" class="btn btn-outline-secondary quantity-minus">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" name="quantity" id="quantity" class="form-control quantity-input text-center" value="1" min="1" max="{{ product.stock }}">
+                                <button type="button" class="btn btn-outline-secondary quantity-plus">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary" {{ 'disabled' if product.stock <= 0 }}>
+                                <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- Product Features -->
+                    <div class="product-features mt-5">
+                        <h4>Features</h4>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i> Premium quality materials
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i> Durable and long-lasting
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i> Consistent dimensions
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i> Weather-resistant
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Delivery Info -->
+                    <div class="delivery-info mt-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="fas fa-truck fa-2x me-3" style="color: var(--primary-color);"></i>
+                            <div>
+                                <h5 class="mb-1">Fast Delivery</h5>
+                                <p class="mb-0 text-muted">2-5 business days</p>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-undo fa-2x me-3" style="color: var(--primary-color);"></i>
+                            <div>
+                                <h5 class="mb-1">Easy Returns</h5>
+                                <p class="mb-0 text-muted">30-day return policy</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Specifications -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <ul class="nav nav-tabs" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="specifications-tab" data-bs-toggle="tab" data-bs-target="#specifications" type="button" role="tab" aria-controls="specifications" aria-selected="true">Specifications</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="applications-tab" data-bs-toggle="tab" data-bs-target="#applications" type="button" role="tab" aria-controls="applications" aria-selected="false">Applications</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">Reviews</button>
+                    </li>
+                </ul>
+                <div class="tab-content p-4 border border-top-0" id="productTabsContent">
+                    <div class="tab-pane fade show active" id="specifications" role="tabpanel" aria-labelledby="specifications-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Technical Specifications</h4>
+                                <table class="table table-striped">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">Dimensions</th>
+                                            <td>230 x 110 x 76 mm</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Weight</th>
+                                            <td>3.2 kg</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Material</th>
+                                            <td>Clay / Concrete</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Compressive Strength</th>
+                                            <td>7.5 N/mm²</td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Water Absorption</th>
+                                            <td>< 15%</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Additional Information</h4>
+                                <p>Our bricks are manufactured using state-of-the-art technology to ensure consistent quality and performance. Each brick undergoes rigorous testing to meet industry standards.</p>
+                                <p>The bricks are fired at high temperatures to achieve optimal strength and durability, making them suitable for various construction applications.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="applications" role="tabpanel" aria-labelledby="applications-tab">
+                        <h4 class="mb-3">Recommended Applications</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-home me-2" style="color: var(--primary-color);"></i> Residential Buildings
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-building me-2" style="color: var(--primary-color);"></i> Commercial Structures
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-industry me-2" style="color: var(--primary-color);"></i> Industrial Facilities
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <i class="fas fa-archway me-2" style="color: var(--primary-color);"></i> Decorative Features
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-road me-2" style="color: var(--primary-color);"></i> Landscaping
+                                    </li>
+                                    <li class="list-group-item">
+                                        <i class="fas fa-fire me-2" style="color: var(--primary-color);"></i> Fireplaces and Chimneys
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                        <h4 class="mb-4">Customer Reviews</h4>
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="me-3">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                </div>
+                                <h5 class="mb-0">Excellent Product</h5>
+                            </div>
+                            <p class="mb-1">These bricks are fantastic! They have a consistent size and color, making them perfect for our renovation project.</p>
+                            <small class="text-muted">- John D., Verified Purchase</small>
+                            <hr>
+                        </div>
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="me-3">
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="fas fa-star text-warning"></i>
+                                    <i class="far fa-star text-warning"></i>
+                                </div>
+                                <h5 class="mb-0">Good Quality</h5>
+                            </div>
+                            <p class="mb-1">The bricks arrived on time and were well-packaged. They're durable and look great in our new garden wall.</p>
+                            <small class="text-muted">- Sarah M., Verified Purchase</small>
+                            <hr>
+                        </div>
+                        
+                        <!-- Add Review Form -->
+                        <div class="mt-4">
+                            <h5>Write a Review</h5>
+                            <form>
+                                <div class="mb-3">
+                                    <label for="rating" class="form-label">Rating</label>
+                                    <select class="form-select" id="rating" required>
+                                        <option value="">Select rating</option>
+                                        <option value="5">5 Stars - Excellent</option>
+                                        <option value="4">4 Stars - Good</option>
+                                        <option value="3">3 Stars - Average</option>
+                                        <option value="2">2 Stars - Fair</option>
+                                        <option value="1">1 Star - Poor</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reviewTitle" class="form-label">Review Title</label>
+                                    <input type="text" class="form-control" id="reviewTitle" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="reviewContent" class="form-label">Review</label>
+                                    <textarea class="form-control" id="reviewContent" rows="3" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit Review</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Products -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="section-title">
+            <h2>Related Products</h2>
+            <p class="text-muted">You might also be interested in these products</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="{{ url_for('static', filename='images/products/red_brick.jpg') }}" class="card-img-top" alt="Red Bricks">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Red Clay Bricks</h5>
+                        <p class="card-text">High-quality red clay bricks perfect for exterior walls and facades.</p>
+                        <span class="product-price">$0.75</span>
+                        <div class="mt-auto">
+                            <a href="#" class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="{{ url_for('static', filename='images/products/concrete_block.jpg') }}" class="card-img-top" alt="Concrete Blocks">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Concrete Blocks</h5>
+                        <p class="card-text">Durable concrete blocks ideal for foundations and structural walls.</p>
+                        <span class="product-price">$1.20</span>
+                        <div class="mt-auto">
+                            <a href="#" class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="{{ url_for('static', filename='images/products/facing_brick.jpg') }}" class="card-img-top" alt="Facing Bricks">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Facing Bricks</h5>
+                        <p class="card-text">Premium facing bricks with a smooth finish for decorative purposes.</p>
+                        <span class="product-price">$1.50</span>
+                        <div class="mt-auto">
+                            <a href="#" class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-4">
+                <div class="card product-card h-100">
+                    <img src="{{ url_for('static', filename='images/products/engineering_brick.jpg') }}" class="card-img-top" alt="Engineering Bricks">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">Engineering Bricks</h5>
+                        <p class="card-text">High-density engineering bricks with excellent load-bearing capacity.</p>
+                        <span class="product-price">$1.35</span>
+                        <div class="mt-auto">
+                            <a href="#" class="btn btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

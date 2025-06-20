@@ -1,0 +1,193 @@
+{% extends "customer/layout.html" %}
+
+{% block title %}Home - Bricks Production{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mx-auto text-center">
+                <h1 class="mb-4">Premium Quality Bricks</h1>
+                <p class="lead mb-5">Experience the finest quality bricks for all your construction needs. Our bricks are crafted with precision and care to ensure durability, aesthetics, and performance.</p>
+                <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">Explore Products</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="text-center fade-in">
+                    <div class="mb-4">
+                        <i class="fas fa-medal fa-3x" style="color: var(--primary-color);"></i>
+                    </div>
+                    <h3>Premium Quality</h3>
+                    <p class="text-muted">Our bricks are manufactured using the finest materials and advanced techniques to ensure superior quality and longevity.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <div class="text-center fade-in">
+                    <div class="mb-4">
+                        <i class="fas fa-truck fa-3x" style="color: var(--primary-color);"></i>
+                    </div>
+                    <h3>Fast Delivery</h3>
+                    <p class="text-muted">We ensure quick and reliable delivery of our products to your construction site, saving you time and resources.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center fade-in">
+                    <div class="mb-4">
+                        <i class="fas fa-headset fa-3x" style="color: var(--primary-color);"></i>
+                    </div>
+                    <h3>Expert Support</h3>
+                    <p class="text-muted">Our team of experts is always ready to assist you with product selection, technical advice, and after-sales support.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="featured-products">
+    <div class="container">
+        <div class="section-title">
+            <h2>Featured Products</h2>
+            <p class="text-muted">Discover our most popular and high-quality brick products</p>
+        </div>
+        
+        <div class="row">
+            {% if products %}
+                {% for product in products %}
+                    <div class="col-md-4 mb-4 fade-in">
+                        <div class="card product-card h-100">
+                            <img src="{{ url_for('static', filename='images/products/' + product.image_url) }}" class="card-img-top" alt="{{ product.name }}">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.description|truncate(100) }}</p>
+                                <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                                <div class="mt-auto">
+                                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline-primary">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center">
+                    <p>No featured products available at the moment.</p>
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('products') }}" class="btn btn-primary">View All Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <img src="{{ url_for('static', filename='images/about.jpg') }}" alt="About Us" class="img-fluid rounded shadow">
+            </div>
+            <div class="col-lg-6">
+                <h2 class="mb-4">About Bricks Production</h2>
+                <p>At Bricks Production, we have been crafting premium quality bricks for over two decades. Our commitment to excellence and innovation has made us a trusted name in the construction industry.</p>
+                <p>We combine traditional craftsmanship with modern technology to produce bricks that meet the highest standards of quality, durability, and aesthetics. Whether you're building a residential home, a commercial complex, or an industrial facility, our diverse range of bricks will meet your specific requirements.</p>
+                <p>Our team of skilled professionals ensures that every brick that leaves our facility is perfect in every aspect, from its dimensions to its strength and appearance.</p>
+                <a href="#" class="btn btn-outline-primary mt-3">Learn More</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="section-title">
+            <h2>What Our Clients Say</h2>
+            <p class="text-muted">Testimonials from our satisfied customers</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm fade-in">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"The quality of bricks from Bricks Production is exceptional. They have been our trusted supplier for multiple construction projects, and they never disappoint."</p>
+                        <div class="d-flex align-items-center mt-4">
+                            <div class="ms-3">
+                                <h6 class="mb-0">John Smith</h6>
+                                <small class="text-muted">Construction Manager</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm fade-in">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"I've been using Bricks Production for my residential projects for years. Their bricks are not only durable but also aesthetically pleasing. Highly recommended!"</p>
+                        <div class="d-flex align-items-center mt-4">
+                            <div class="ms-3">
+                                <h6 class="mb-0">Emily Johnson</h6>
+                                <small class="text-muted">Architect</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 border-0 shadow-sm fade-in">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                            <i class="fas fa-star text-warning"></i>
+                        </div>
+                        <p class="card-text">"What sets Bricks Production apart is their commitment to customer satisfaction. Their team is always ready to assist and provide expert advice. Great service!"</p>
+                        <div class="d-flex align-items-center mt-4">
+                            <div class="ms-3">
+                                <h6 class="mb-0">Michael Brown</h6>
+                                <small class="text-muted">Property Developer</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-dark text-white text-center">
+    <div class="container">
+        <h2 class="mb-4" style="color: var(--secondary-color);">Ready to Start Your Project?</h2>
+        <p class="lead mb-4">Explore our wide range of premium quality bricks and find the perfect match for your construction needs.</p>
+        <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">Shop Now</a>
+    </div>
+</section>
+{% endblock %} 

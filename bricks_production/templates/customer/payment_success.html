@@ -1,0 +1,50 @@
+{% extends "customer/layout.html" %}
+
+{% block title %}Payment Successful - Bricks Production{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <div class="card border-0 shadow-sm p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle fa-5x" style="color: var(--success-color);"></i>
+                    </div>
+                    <h1 class="mb-4">Payment Successful!</h1>
+                    <p class="lead mb-4">Thank you for your purchase. Your order has been placed successfully.</p>
+                    
+                    <div class="alert alert-success mb-4">
+                        <p class="mb-0">A confirmation email has been sent to your email address.</p>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Order Details</h5>
+                                    <p class="card-text">Your order will be processed and shipped within 2-3 business days.</p>
+                                    <a href="{{ url_for('profile') }}" class="btn btn-outline-primary">View Order</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">Need Help?</h5>
+                                    <p class="card-text">If you have any questions about your order, please contact our customer service.</p>
+                                    <a href="#" class="btn btn-outline-primary">Contact Us</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ url_for('products') }}" class="btn btn-primary">
+                        <i class="fas fa-shopping-bag me-2"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

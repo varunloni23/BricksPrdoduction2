@@ -1,0 +1,246 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}Orders - Admin Dashboard{% endblock %}
+
+{% block page_title %}Orders Management{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">All Orders</h5>
+        <div>
+            <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#filterModal">
+                <i class="fas fa-filter me-2"></i> Filter
+            </button>
+            <a href="#" class="btn btn-outline-success">
+                <i class="fas fa-file-export me-2"></i> Export
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table admin-table data-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.order_id }}</td>
+                            <td>{{ order.username }}</td>
+                            <td>{{ order.order_date.strftime('%b %d, %Y') }}</td>
+                            <td>{{ order.item_count }}</td>
+                            <td>${{ "%.2f"|format(order.total_amount) }}</td>
+                            <td>
+                                <span class="status-badge status-{{ order.status.lower() }}">
+                                    {{ order.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('admin_order_detail', order_id=order.order_id) }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-cog"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" onclick="updateStatus('{{ order.order_id }}', 'Processing')">Mark as Processing</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="updateStatus('{{ order.order_id }}', 'Shipped')">Mark as Shipped</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="updateStatus('{{ order.order_id }}', 'Delivered')">Mark as Delivered</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item text-danger" href="#" onclick="updateStatus('{{ order.order_id }}', 'Cancelled')">Cancel Order</a></li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Order Statistics -->
+<div class="row">
+    <div class="col-xl-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0">Order Statistics</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="orderStatsChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-xl-6 mb-4">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-header bg-white border-0">
+                <h5 class="mb-0">Orders by Status</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="orderStatusChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Modal -->
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="filterModalLabel">Filter Orders</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('admin_orders') }}" method="get">
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All Statuses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                            <option value="Paid">Paid</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="date_from" class="form-label">Date From</label>
+                        <input type="date" class="form-control" id="date_from" name="date_from">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="date_to" class="form-label">Date To</label>
+                        <input type="date" class="form-control" id="date_to" name="date_to">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="customer" class="form-label">Customer</label>
+                        <input type="text" class="form-control" id="customer" name="customer" placeholder="Search by customer name or email">
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="clearFilters()">Clear Filters</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Update Form (Hidden) -->
+<form id="status-update-form" action="{{ url_for('admin_update_order_status', order_id='__ORDER_ID__') }}" method="post" style="display: none;">
+    <input type="hidden" name="status" id="status-input" value="">
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    $(document).ready(function() {
+        // Initialize DataTable only if not already initialized
+        if (!$.fn.DataTable.isDataTable('.data-table')) {
+            $('.data-table').DataTable({
+                responsive: true,
+                "pageLength": 10,
+                "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+                "order": [[2, "desc"]]
+            });
+        }
+        
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        
+        // Order Statistics Chart
+        const orderStatsCtx = document.getElementById('orderStatsChart').getContext('2d');
+        const orderStatsChart = new Chart(orderStatsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Orders',
+                    data: [65, 59, 80, 81, 56, 55, 40, 45, 60, 70, 75, 80],
+                    backgroundColor: '#8B4513',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Order Status Chart
+        const orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
+        const orderStatusChart = new Chart(orderStatusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+                datasets: [{
+                    data: [10, 25, 15, 45, 5],
+                    backgroundColor: [
+                        '#ffeeba',
+                        '#b8daff',
+                        '#c3e6cb',
+                        '#d4edda',
+                        '#f8d7da'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    });
+    
+    // Update order status
+    function updateStatus(orderId, status) {
+        if (confirm(`Are you sure you want to update this order to ${status}?`)) {
+            const form = document.getElementById('status-update-form');
+            const statusInput = document.getElementById('status-input');
+            
+            form.action = form.action.replace('__ORDER_ID__', orderId);
+            statusInput.value = status;
+            form.submit();
+        }
+    }
+    
+    // Clear filters
+    function clearFilters() {
+        document.getElementById('status').value = '';
+        document.getElementById('date_from').value = '';
+        document.getElementById('date_to').value = '';
+        document.getElementById('customer').value = '';
+    }
+</script>
+{% endblock %} 

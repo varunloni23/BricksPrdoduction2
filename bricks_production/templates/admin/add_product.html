@@ -1,0 +1,160 @@
+{% extends "admin/layout.html" %}
+
+{% block title %}Add Product - Admin Dashboard{% endblock %}
+
+{% block page_title %}Add New Product{% endblock %}
+
+{% block content %}
+<div class="card border-0 shadow-sm">
+    <div class="card-header bg-white border-0">
+        <h5 class="mb-0">Product Information</h5>
+    </div>
+    <div class="card-body">
+        <form action="{{ url_for('admin_add_product') }}" method="post" enctype="multipart/form-data" class="admin-form needs-validation" novalidate>
+            <div class="row">
+                <!-- Product Details -->
+                <div class="col-lg-8">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Product Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <div class="invalid-feedback">
+                            Please enter a product name.
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                        <div class="invalid-feedback">
+                            Please enter a product description.
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="price" class="form-label">Price ($)</label>
+                            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid price.
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="stock" class="form-label">Stock Quantity</label>
+                            <input type="number" class="form-control" id="stock" name="stock" min="0" required>
+                            <div class="invalid-feedback">
+                                Please enter a valid stock quantity.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <select class="form-select" id="category" name="category">
+                            <option value="structural">Structural Bricks</option>
+                            <option value="decorative">Decorative Bricks</option>
+                            <option value="special">Special Purpose Bricks</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="featured" name="featured">
+                            <label class="form-check-label" for="featured">
+                                Feature this product on homepage
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product Image -->
+                <div class="col-lg-4">
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Product Image</label>
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                        <div class="form-text">Recommended size: 800x800 pixels</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Image Preview</label>
+                        <div class="border rounded p-2 text-center">
+                            <img id="image-preview" src="{{ url_for('static', filename='images/products/default.jpg') }}" alt="Product Image Preview" class="img-fluid" style="max-height: 200px;">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="image_alt" class="form-label">Image Alt Text</label>
+                        <input type="text" class="form-control" id="image_alt" name="image_alt" placeholder="Brief description of the image">
+                    </div>
+                </div>
+                
+                <!-- Product Specifications -->
+                <div class="col-12 mt-4">
+                    <h5 class="mb-3">Product Specifications</h5>
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="dimensions" class="form-label">Dimensions</label>
+                            <input type="text" class="form-control" id="dimensions" name="dimensions" placeholder="e.g., 230 x 110 x 76 mm">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="weight" class="form-label">Weight</label>
+                            <input type="text" class="form-control" id="weight" name="weight" placeholder="e.g., 3.2 kg">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="material" class="form-label">Material</label>
+                            <input type="text" class="form-control" id="material" name="material" placeholder="e.g., Clay, Concrete">
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label for="strength" class="form-label">Compressive Strength</label>
+                            <input type="text" class="form-control" id="strength" name="strength" placeholder="e.g., 7.5 N/mm²">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Submit Buttons -->
+                <div class="col-12 mt-4">
+                    <div class="d-flex justify-content-end">
+                        <a href="{{ url_for('admin_products') }}" class="btn btn-outline-secondary me-2">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Image preview
+        const imageInput = document.getElementById('image');
+        const imagePreview = document.getElementById('image-preview');
+        
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Form validation
+        const form = document.querySelector('.needs-validation');
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            form.classList.add('was-validated');
+        }, false);
+    });
+</script>
+{% endblock %} 

@@ -1,0 +1,309 @@
+/* Global Admin Styles */
+:root {
+    --primary-color: #C75146;      /* Terracotta Red */
+    --secondary-color: #F2C091;    /* Soft Clay */
+    --accent-color: #E87D33;       /* Burnt Orange */
+    --light-color: #FFF8F0;        /* Off-White */
+    --dark-color: #4A3B32;         /* Deep Brown */
+    --text-color: #2D2926;         /* Almost Black */
+    --white-color: #FFFFFF;
+    --gray-color: #F8F9FA;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --sidebar-width: 250px;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-color);
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+}
+
+/* Sidebar */
+#wrapper {
+    overflow-x: hidden;
+}
+
+#sidebar-wrapper {
+    min-height: 100vh;
+    width: var(--sidebar-width);
+    margin-left: 0;
+    transition: margin 0.25s ease-out;
+}
+
+#sidebar-wrapper .sidebar-heading {
+    padding: 1.2rem 1.25rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+#sidebar-wrapper .list-group {
+    width: var(--sidebar-width);
+}
+
+#sidebar-wrapper .list-group-item {
+    border: none;
+    padding: 15px 20px;
+    font-size: 0.95rem;
+    border-left: 4px solid transparent;
+    transition: all 0.3s ease;
+}
+
+#sidebar-wrapper .list-group-item:hover,
+#sidebar-wrapper .list-group-item.active {
+    background-color: rgba(199, 81, 70, 0.1);
+    border-left-color: var(--primary-color);
+}
+
+/* Page Content */
+#page-content-wrapper {
+    min-width: 100vw;
+    background-color: #f8f9fa;
+}
+
+.navbar {
+    padding: 0.5rem 1rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    background-color: var(--white-color);
+}
+
+/* Toggle Button */
+#sidebarToggle {
+    background-color: transparent;
+    border: none;
+}
+
+#sidebarToggle:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Toggled State */
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: calc(-1 * var(--sidebar-width));
+}
+
+/* Dashboard Stats */
+.stat-card {
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card .icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.stat-card .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.stat-card .stat-label {
+    font-size: 1rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-card.primary {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+}
+
+.stat-card.secondary {
+    background-color: var(--secondary-color);
+    color: var(--dark-color);
+}
+
+.stat-card.accent {
+    background-color: var(--accent-color);
+    color: var(--white-color);
+}
+
+.stat-card.light {
+    background-color: var(--light-color);
+    color: var(--dark-color);
+}
+
+/* Tables */
+.table-container {
+    background-color: var(--white-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th {
+    background-color: var(--light-color);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding: 15px;
+    color: var(--dark-color);
+}
+
+.admin-table td {
+    padding: 15px;
+    vertical-align: middle;
+}
+
+.admin-table tbody tr {
+    border-bottom: 1px solid #f2f2f2;
+    transition: all 0.3s ease;
+}
+
+.admin-table tbody tr:hover {
+    background-color: rgba(242, 192, 145, 0.1);
+}
+
+.admin-table .product-image {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Forms */
+.admin-form {
+    background-color: var(--white-color);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    padding: 30px;
+    margin-bottom: 30px;
+}
+
+.admin-form label {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.admin-form .form-control {
+    border-radius: 4px;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+}
+
+.admin-form .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25);
+}
+
+/* Buttons */
+.btn-admin {
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-admin-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white-color);
+}
+
+.btn-admin-primary:hover {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--white-color);
+}
+
+.btn-admin-outline {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.btn-admin-outline:hover {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+}
+
+/* Order Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-pending {
+    background-color: #ffeeba;
+    color: #856404;
+}
+
+.status-processing {
+    background-color: #b8daff;
+    color: #004085;
+}
+
+.status-shipped {
+    background-color: #c3e6cb;
+    color: #155724;
+}
+
+.status-delivered {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.status-paid {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: 0;
+    }
+
+    #page-content-wrapper {
+        min-width: 0;
+        width: 100%;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: calc(-1 * var(--sidebar-width));
+    }
+}
+
+@media (max-width: 767px) {
+    #sidebar-wrapper {
+        margin-left: calc(-1 * var(--sidebar-width));
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0;
+    }
+} 

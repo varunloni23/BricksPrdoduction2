@@ -1,0 +1,159 @@
+{% extends "customer/layout.html" %}
+
+{% block title %}My Profile - Bricks Production{% endblock %}
+
+{% block content %}
+<!-- Profile Header -->
+<section class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="mb-3">My Profile</h1>
+                <p class="lead">Manage your account and view your orders</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Profile Content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-lg-3 mb-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <div class="rounded-circle bg-light d-inline-flex justify-content-center align-items-center" style="width: 80px; height: 80px;">
+                                <i class="fas fa-user fa-2x" style="color: var(--primary-color);"></i>
+                            </div>
+                            <h5 class="mt-3 mb-1">{{ current_user.username }}</h5>
+                            <p class="text-muted mb-0">{{ current_user.email }}</p>
+                        </div>
+                        
+                        <div class="list-group list-group-flush">
+                            <a href="#profile-info" class="list-group-item list-group-item-action active">
+                                <i class="fas fa-user-circle me-2"></i> Account Information
+                            </a>
+                            <a href="#order-history" class="list-group-item list-group-item-action">
+                                <i class="fas fa-shopping-bag me-2"></i> Order History
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-map-marker-alt me-2"></i> Shipping Addresses
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <i class="fas fa-credit-card me-2"></i> Payment Methods
+                            </a>
+                            <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action text-danger">
+                                <i class="fas fa-sign-out-alt me-2"></i> Logout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-lg-9">
+                <!-- Account Information -->
+                <div id="profile-info" class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <h4 class="mb-4">Account Information</h4>
+                        
+                        <form>
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="username" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="username" value="{{ current_user.username }}" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="email" class="form-label">Email Address</label>
+                                    <input type="email" class="form-control" id="email" value="{{ current_user.email }}" disabled>
+                                </div>
+                            </div>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="role" class="form-label">Account Type</label>
+                                    <input type="text" class="form-control" id="role" value="{{ current_user.role|capitalize }}" disabled>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="joined" class="form-label">Member Since</label>
+                                    <input type="text" class="form-control" id="joined" value="{{ now.strftime('%B %Y') }}" disabled>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4">
+                                <button type="button" class="btn btn-primary" disabled>
+                                    <i class="fas fa-edit me-2"></i> Edit Profile
+                                </button>
+                                <button type="button" class="btn btn-outline-primary ms-2" disabled>
+                                    <i class="fas fa-key me-2"></i> Change Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <!-- Order History -->
+                <div id="order-history" class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <h4 class="mb-4">Order History</h4>
+                        
+                        {% if orders %}
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Date</th>
+                                            <th>Items</th>
+                                            <th>Total</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for order in orders %}
+                                            <tr>
+                                                <td>{{ order.order_id[:8] }}...</td>
+                                                <td>{{ order.order_date.strftime('%b %d, %Y') }}</td>
+                                                <td>{{ order.item_count }}</td>
+                                                <td>${{ "%.2f"|format(order.total_amount) }}</td>
+                                                <td>
+                                                    <span class="badge 
+                                                        {% if order.status == 'Delivered' %}bg-success
+                                                        {% elif order.status == 'Cancelled' %}bg-danger
+                                                        {% elif order.status == 'Paid' %}bg-info
+                                                        {% else %}bg-warning{% endif %}">
+                                                        {{ order.status }}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <a href="{{ url_for('order_detail', order_id=order.order_id) }}" class="btn btn-sm btn-outline-primary">
+                                                        View
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <div class="mb-3">
+                                    <i class="fas fa-shopping-bag fa-3x" style="color: var(--secondary-color);"></i>
+                                </div>
+                                <h5 class="mb-3">No Orders Yet</h5>
+                                <p class="mb-4">You haven't placed any orders yet.</p>
+                                <a href="{{ url_for('products') }}" class="btn btn-primary">
+                                    <i class="fas fa-shopping-bag me-2"></i> Start Shopping
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 
